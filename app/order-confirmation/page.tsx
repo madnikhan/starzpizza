@@ -1,18 +1,17 @@
 "use client";
 
+import { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 import { CheckCircle, Home } from "lucide-react";
 import Link from "next/link";
 import Header from "@/components/Header";
 
-export default function OrderConfirmationPage() {
+function OrderConfirmationContent() {
   const searchParams = useSearchParams();
   const orderId = searchParams.get("orderId");
 
   return (
-    <>
-      <Header />
-      <div className="min-h-screen bg-gray-50 py-12">
+    <div className="min-h-screen bg-gray-50 py-12">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
           <CheckCircle size={80} className="mx-auto text-green-500 mb-6" />
@@ -41,6 +40,24 @@ export default function OrderConfirmationPage() {
           </div>
         </div>
       </div>
+  );
+}
+
+export default function OrderConfirmationPage() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <div className="min-h-screen bg-gray-50 py-12">
+          <div className="container mx-auto px-4">
+            <div className="max-w-2xl mx-auto bg-white rounded-lg shadow-md p-8 text-center">
+              <p className="text-lg text-gray-600">Loading...</p>
+            </div>
+          </div>
+        </div>
+      }>
+        <OrderConfirmationContent />
+      </Suspense>
     </>
   );
 }
