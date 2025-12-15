@@ -41,7 +41,7 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
     setSelectedOptions({});
   };
 
-  const imageUrl = item.image || getFoodImage(item.id, item.category);
+  const imageUrl = item.imageUrl || item.image || getFoodImage(item.id, item.category, item.imageUrl);
   const fallbackUrl = `https://via.placeholder.com/400x300/DC2626/FFFFFF?text=${encodeURIComponent(item.name.substring(0, 20))}`;
 
   return (

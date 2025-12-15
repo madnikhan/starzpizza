@@ -4,10 +4,11 @@ export type PaymentMethod = "card" | "cash";
 export interface MenuItem {
   id: string;
   name: string;
-  description: string;
+  description?: string;
   price: number;
   category: string;
   image?: string;
+  imageUrl?: string;
   options?: MenuOption[];
   available?: boolean;
 }

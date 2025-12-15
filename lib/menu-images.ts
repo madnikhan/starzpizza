@@ -94,8 +94,13 @@ const categoryFallbacks: Record<string, string> = {
   "special-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop&q=80",
 };
 
-export function getFoodImage(itemId: string, category: string): string {
-  // First try to get specific image for this item
+export function getFoodImage(itemId: string, category: string, imageUrl?: string): string {
+  // First priority: Use Flipdish image if provided
+  if (imageUrl) {
+    return imageUrl;
+  }
+  
+  // Second priority: Try to get specific image for this item
   if (menuItemImages[itemId]) {
     return menuItemImages[itemId];
   }
