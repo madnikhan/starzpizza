@@ -32,18 +32,79 @@ export default function Home() {
           <p className="text-xl text-gray-600 mb-8">
             Fresh, Handmade Burgers, Pizzas & Shakes
           </p>
-          <div className="flex flex-wrap justify-center gap-6 text-sm">
-            <div className="flex items-center gap-2">
-              <Phone size={18} className="text-primary" />
-              <span>01743 362 362</span>
+        </div>
+
+        {/* Location Section */}
+        <div className="mb-12 bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
+            {/* Google Maps Embed */}
+            <div className="w-full h-[400px] lg:h-[500px]">
+              <iframe
+                src="https://www.google.com/maps?q=27+Castle+Foregate+Shrewsbury+SY1+2EE&output=embed"
+                width="100%"
+                height="100%"
+                style={{ border: 0 }}
+                allowFullScreen
+                loading="lazy"
+                referrerPolicy="no-referrer-when-downgrade"
+                className="w-full h-full"
+                title="STAR'Z Location Map"
+              />
             </div>
-            <div className="flex items-center gap-2">
-              <MapPin size={18} className="text-primary" />
-              <span>27 Castle Foregate, Shrewsbury SY1 2EE</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Clock size={18} className="text-primary" />
-              <span>Sun-Thu: 4PM-1AM | Fri-Sat: 4PM-3AM</span>
+
+            {/* Location Info */}
+            <div className="p-8 lg:p-12 flex flex-col justify-center bg-gradient-to-br from-gray-50 to-white">
+              <h3 className="text-3xl md:text-4xl font-bold text-primary mb-6">Visit Us</h3>
+              
+              <div className="space-y-6">
+                {/* Address */}
+                <div className="flex items-start gap-4">
+                  <MapPin size={24} className="text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Address</h4>
+                    <p className="text-gray-600">
+                      27 Castle Foregate<br />
+                      Shrewsbury SY1 2EE
+                    </p>
+                  </div>
+                </div>
+
+                {/* Phone */}
+                <div className="flex items-start gap-4">
+                  <Phone size={24} className="text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Phone</h4>
+                    <a 
+                      href="tel:01743362362" 
+                      className="text-gray-600 hover:text-primary transition"
+                    >
+                      01743 362 362
+                    </a>
+                  </div>
+                </div>
+
+                {/* Opening Hours */}
+                <div className="flex items-start gap-4">
+                  <Clock size={24} className="text-primary mt-1 flex-shrink-0" />
+                  <div>
+                    <h4 className="font-semibold text-gray-800 mb-1">Opening Hours</h4>
+                    <p className="text-gray-600">
+                      Sun-Thu: 4PM-1AM<br />
+                      Fri-Sat: 4PM-3AM
+                    </p>
+                  </div>
+                </div>
+
+                {/* Directions Button */}
+                <a
+                  href="https://www.google.com/maps/dir/?api=1&destination=27+Castle+Foregate+Shrewsbury+SY1+2EE"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block mt-4 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition text-center"
+                >
+                  Get Directions
+                </a>
+              </div>
             </div>
           </div>
         </div>

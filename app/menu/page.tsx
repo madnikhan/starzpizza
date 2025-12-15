@@ -15,6 +15,7 @@ const categoryImages: Record<string, string> = {
   "tenders": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&h=400&fit=crop&q=80",
   "desserts": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&h=400&fit=crop&q=80",
   "special-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=400&fit=crop&q=80",
+  "drinks": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600&h=400&fit=crop&q=80",
 };
 
 export default function MenuPage() {

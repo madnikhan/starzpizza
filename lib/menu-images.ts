@@ -92,6 +92,7 @@ const categoryFallbacks: Record<string, string> = {
   "tenders": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=400&h=300&fit=crop&q=80",
   "desserts": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400&h=300&fit=crop&q=80",
   "special-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop&q=80",
+  "drinks": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=400&h=300&fit=crop&q=80",
 };
 
 export function getFoodImage(itemId: string, category: string, imageUrl?: string): string {

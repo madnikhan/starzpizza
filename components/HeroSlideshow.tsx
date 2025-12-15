@@ -6,27 +6,51 @@ import Image from "next/image";
 const slides = [
   {
     id: 1,
-    image: "https://images.unsplash.com/photo-1550547660-d9450f859349?w=1200&h=600&fit=crop&q=80",
+    image: "https://flipdish-web.imgix.net/br3159/49a514dc476eb48cfd45838455707356.jpeg?w=1200&h=600&fit=crop&auto=format&q=80",
     title: "Delicious Burgers",
     subtitle: "Handmade with Love",
   },
   {
     id: 2,
-    image: "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=1200&h=600&fit=crop&q=80",
+    image: "https://flipdish-web.imgix.net/br3159/f206973bc7f7cdbe41da71f288c5f28a.jpeg?w=1200&h=600&fit=crop&auto=format&q=80",
     title: "Fresh Pizzas",
     subtitle: "Made to Order",
   },
   {
     id: 3,
-    image: "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=1200&h=600&fit=crop&q=80",
+    image: "https://flipdish-web.imgix.net/br3159/b3b18a068405401671f96e12c1188181.jpeg?w=1200&h=600&fit=crop&auto=format&q=80",
     title: "Creamy Shakes",
     subtitle: "13 Amazing Flavors",
   },
   {
     id: 4,
-    image: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=1200&h=600&fit=crop&q=80",
+    image: "https://flipdish-web.imgix.net/br3159/20ba1696c6be30f56bd1dad3b66e6af9.jpeg?w=1200&h=600&fit=crop&auto=format&q=80",
     title: "Decadent Desserts",
     subtitle: "Sweet Treats for You",
+  },
+  {
+    id: 5,
+    image: "https://flipdish.imgix.net/oXbXKcz8bY3HM97sqKwr7zZcHY.jpg?w=1200&h=600&fit=crop&auto=format&q=80",
+    title: "Starz Special",
+    subtitle: "Premium Quality",
+  },
+  {
+    id: 6,
+    image: "https://flipdish.imgix.net/AIORsHa1pn4aE9SCBAgoIbN5Qrk.jpg?w=1200&h=600&fit=crop&auto=format&q=80",
+    title: "Loaded Fries",
+    subtitle: "Irresistible Flavors",
+  },
+  {
+    id: 7,
+    image: "https://flipdish.imgix.net/QzZeFRJau6eOGIN8pj5Wf9bDOk.jpg?w=1200&h=600&fit=crop&auto=format&q=80",
+    title: "Chicken Burgers",
+    subtitle: "Crispy & Juicy",
+  },
+  {
+    id: 8,
+    image: "https://flipdish.imgix.net/bwlqetwkzx7RJ3jz9M2E8GHLU.jpg?w=1200&h=600&fit=crop&auto=format&q=80",
+    title: "Smash Burgers",
+    subtitle: "Perfectly Smashed",
   },
 ];
 
