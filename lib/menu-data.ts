@@ -3708,6 +3708,338 @@ export const menuItems: MenuItem[] = [
     name: "Water",
     price: 1.39,
     category: "drinks",
+  },
+  // Pizzas
+  {
+    id: "starz-pizza-001",
+    name: "Margherita Pizza",
+    description: "Tomato Base With Mozzarella Cheese",
+    price: 6.90,
+    category: "pizzas",
+    imageUrl: "/margharita.jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-002",
+    name: "Garlic Pizza",
+    description: "Garlic Butter With Mozzarella Cheese",
+    price: 6.90,
+    category: "pizzas",
+    imageUrl: "/garlic pizza.jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-003",
+    name: "Hawaiian Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Turkey Ham And Pineapple",
+    price: 6.90,
+    category: "pizzas",
+    imageUrl: "/Hawaiian Pizza .jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-004",
+    name: "Farm House",
+    description: "Tomato Base Mozzarella, Cheese, Mushroom And Turkey Ham",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/Farm House pizza.jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-005",
+    name: "Vegetarian Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Mushroom, Onion, Mix Pepper, And Sweet Corn",
+    price: 6.90,
+    category: "pizzas",
+    imageUrl: "/Vegetarian Pizza .jpg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-006",
+    name: "Vegetarian Hot",
+    description: "Tomato Base, Mozzarella Cheese, Onion, Mix Pepper, Green Chilli And Jalapenos",
+    price: 6.90,
+    category: "pizzas",
+    imageUrl: "/Vegetarian Hot pizza.jpg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-007",
+    name: "Tandoori Chicken",
+    description: "Tomato Base, Mozzarella Cheese, Tandoori Chicken, Onion, Mix Pepper And Sweet Corn",
+    price: 11.00,
+    category: "pizzas",
+    imageUrl: "/Tandoori Chicken pizza.webp",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.50 },
+          { label: "15 Inch", price: 5.50 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-008",
+    name: "Tandoori Hot",
+    description: "Tomato Base, Mozzarella Cheese, Tandoori Chicken, Onion, Green Chilli, Jalapeno",
+    price: 11.00,
+    category: "pizzas",
+    imageUrl: "/Tandoori Hot pizza.jpg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.50 },
+          { label: "15 Inch", price: 5.50 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-009",
+    name: "Special Kebab Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Lamb Donner, Tandoori Chicken, Onion And Mix Peppers",
+    price: 11.00,
+    category: "pizzas",
+    imageUrl: "/Special Kebab Pizza .webp",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.50 },
+          { label: "15 Inch", price: 5.50 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-010",
+    name: "Meat Feast",
+    description: "Lamb Doner, Chicken Minced & Spicy Beef",
+    price: 11.00,
+    category: "pizzas",
+    imageUrl: "/Meat Feast pizza.png",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.50 },
+          { label: "15 Inch", price: 5.50 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-011",
+    name: "Romanian Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Pepperoni, Mushroom, Sweet Corn And Black Olives",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/Romanian Pizza .jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-012",
+    name: "Mexican Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Spicy Beef, Red Onion, Green Chilli And Mix Pepper",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/Mexican Pizza .jpg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-013",
+    name: "BBQ Chicken Pizza",
+    description: "BBQ Base Mozzarella Cheese, Chicken Minced, Onion Sweet Corn & Mix Pepper",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/BBQ Chicken Pizza .jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-014",
+    name: "Tuna Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Tuna & Sweetcorn",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/Tuna Pizza .jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-015",
+    name: "Sea Food Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Tuna & Prawn",
+    price: 9.50,
+    category: "pizzas",
+    imageUrl: "/Sea Food Pizza .jpeg",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 3.00 },
+          { label: "15 Inch", price: 5.00 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-016",
+    name: "STAR'Z Special Pizza",
+    description: "Tomato Base, Mozzarella Cheese, Chicken Mince, Spicy Beef, Onion, Mix Pepper And Black Olives",
+    price: 11.00,
+    category: "pizzas",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.50 },
+          { label: "15 Inch", price: 5.50 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-pizza-017",
+    name: "Create Your Own Pizza",
+    description: "Any Four Toppings Of Your Own Extra Toppings",
+    price: 6.90,
+    category: "pizzas",
+    options: [
+      {
+        name: "Size",
+        choices: [
+          { label: "9 Inch", price: 0 },
+          { label: "12 Inch", price: 2.30 },
+          { label: "15 Inch", price: 4.60 }
+        ]
+      },
+      {
+        name: "Extra Toppings",
+        choices: [
+          { label: "Chicken Mince", price: 0 },
+          { label: "Turkey Ham", price: 0 },
+          { label: "Pineapple", price: 0 },
+          { label: "Pepperoni", price: 0 },
+          { label: "Jalapeno", price: 0 },
+          { label: "Tandoori Chicken", price: 0 },
+          { label: "Mushroom", price: 0 },
+          { label: "Tuna", price: 0 },
+          { label: "Red Onion", price: 0 },
+          { label: "Green Chilli", price: 0 },
+          { label: "Donner Meat", price: 0 },
+          { label: "Sweet Corn", price: 0 },
+          { label: "Olive", price: 0 },
+          { label: "Spicy Beef", price: 0 },
+          { label: "Mix Pepper", price: 0 }
+        ]
+      }
+    ]
+  },
+  {
+    id: "starz-garlic-bread",
+    name: "Garlic Bread",
+    description: "Garlic Butter With Mozzarella Cheese",
+    price: 4.99,
+    category: "sides",
   }
 ];
 
@@ -3730,4 +4062,5 @@ export const categories = [
   { id: "desserts", name: "Desserts" },
   { id: "shakes", name: "Shakes" },
   { id: "drinks", name: "Drinks" },
+  { id: "pizzas", name: "Pizzas" },
 ];
