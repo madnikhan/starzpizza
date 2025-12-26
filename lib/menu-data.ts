@@ -1388,7 +1388,7 @@ export const menuItems: MenuItem[] = [
     description: "2 Juicy prime angus patties smashed and topped with cheese. Served in a soft warm seeded brioche bun with fresh lettuce, gherkins, crunchy diced onion and big up sauce.",
     price: 6.99,
     category: "smash-burgers",
-    imageUrl: "https://flipdish.imgix.net/oXbXKcz8bY3HM97sqKwr7zZcHY.jpg",
+    imageUrl: "/Star’z angus smash.jpeg",
     options: [
       {
         name: "Remove Options (Angus Burgers)",
@@ -1815,7 +1815,7 @@ export const menuItems: MenuItem[] = [
     description: "Bin that bun! With two juicy prime angus patties topped with cheese and sandwiched between rings of Spanish white onion, seasoned and caramlised to perfection served with Big Up sauce. Go Keto? Switch up the sauce to garlic mayoli",
     price: 7.49,
     category: "smash-burgers",
-    imageUrl: "https://flipdish.imgix.net/U5GJdKmxqS68ENRM7qMEu850vMI.jpg",
+    imageUrl: "/Onion wrapped flying Dutchmen.jpeg",
     options: [
       {
         name: "Remove Options (Flying Dutchman)",
@@ -1893,7 +1893,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Served in a brioche bun, fresh lettuce, cheese and mayo.",
     price: 6.99,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/bATrOexKjdHMSoZG0H1V1a0OqSU.jpg",
+    imageUrl: "/Star’z buttermilk crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -1962,7 +1962,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Dipped in our rich garlic and herb butter glaze. Served in a soft warm seeded brioche bun with fresh lettuce, cheese and garlic mayoli.",
     price: 7.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/i0zNcWoZrxO2eJdYOkK37drOdc.jpg",
+    imageUrl: "/Garlic buttermilk crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2031,7 +2031,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Dipped in our flaming hot spicy butter glaze. Served in a brioche bun with fresh lettuce, cheese and Slapz sriracha mayo.",
     price: 7.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/EytQ6eIY0mx1cEg6CTzP2jIM8.jpg",
+    imageUrl: "/Flaming buttermilk crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2100,7 +2100,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Dipped in hickory smoked bbq glaze. Served in a brioche bun with fresh lettuce, cheese and mayo.",
     price: 7.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/9Yb9AP1A40qVfMBsvRmfvN2eSw.jpg",
+    imageUrl: "/Korean bbq crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2169,7 +2169,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Dipped in authentic katsu curry glaze. Served in a brioche bun with fresh lettuce, cheese and Slapz sriracha mayo.",
     price: 7.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/0ue2AXFmyWKAqeXRqouLKeGthrg.jpg",
+    imageUrl: "/Katsu kurry crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2238,7 +2238,7 @@ export const menuItems: MenuItem[] = [
     description: "Buttermilk chicken coated in our special 7 herb seasoning fried to crispy perfection. Served in a brioche bun with fresh lettuce, cheese and mayo, topped with a crispy potato hash brown.",
     price: 7.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/TOQtVXypExvwiSdEGsTFyyXq0qg.jpg",
+    imageUrl: "/Supreme buttermilk crispy.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2307,7 +2307,7 @@ export const menuItems: MenuItem[] = [
     description: "Marinated for 24 hours in our in house Portuguese peri sauce and flame grilled to perfection. Served in a brioche bun with lettuce, diced onion, cheese and Slapz spicy mayo.",
     price: 6.99,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/FFE2f9cMwIQbsNTS98HATPgKGA.jpg",
+    imageUrl: "/Peri peradise.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2376,7 +2376,7 @@ export const menuItems: MenuItem[] = [
     description: "2 Premium lamb donner patties smashed and topped with cheese. Served in a soft warm seeded brioche bun with fresh lettuce, gherkins, crunchy diced onion and big up sauce.",
     price: 6.99,
     category: "smash-burgers",
-    imageUrl: "https://flipdish.imgix.net/FuwUa6LfztokU7e5GNApRIiVPyg.jpg",
+    imageUrl: "/Smash Doner delight.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2445,7 +2445,7 @@ export const menuItems: MenuItem[] = [
     description: "2 Premium lamb doner patties mixed in special spices, smashed and topped with cheese. Served in a soft warm seeded brioche bun with fresh lettuce, Algerian sauce and topped with seasoned mushroom, onion and pepper stir fry. Feeling spicy? Add jalapeños.",
     price: 6.99,
     category: "smash-burgers",
-    imageUrl: "https://flipdish.imgix.net/pdMGkkivg8zwLrM9skWlZHtMFXE.jpg",
+    imageUrl: "/Red Doner sizzle.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2653,7 +2653,7 @@ export const menuItems: MenuItem[] = [
     description: "Premium veggie burger fried to crispy perfection, topped with cheese and served in a soft warm seeded brioche bun with fresh lettuce, crunchy diced onion, gherkins and creamy mayo.",
     price: 5.49,
     category: "chicken-burgers",
-    imageUrl: "https://flipdish.imgix.net/mWM2YAey8uEQR3uH2Ukie7Z3M0U.jpg",
+    imageUrl: "/Star’z veggie delight.jpeg",
     options: [
       {
         name: "Remove Options (Burgers)",
@@ -2790,7 +2790,7 @@ export const menuItems: MenuItem[] = [
     name: "Buttermilk Chicken Tenders (3 pcs)",
     price: 4.99,
     category: "tenders",
-    imageUrl: "https://flipdish.imgix.net/lgLosKs3DeOVPfv9uws7JSh5Qk.jpg",
+    imageUrl: "/Classic tender.jpeg",
     options: [
       {
         name: "Choose Flavour (Tenders)",
@@ -2855,6 +2855,7 @@ export const menuItems: MenuItem[] = [
     name: "Buttermilk Chicken Tenders (5 pcs)",
     price: 5.99,
     category: "tenders",
+    imageUrl: "/Classic tender.jpeg",
     options: [
       {
         name: "Choose Flavour (Tenders)",

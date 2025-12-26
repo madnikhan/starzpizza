@@ -9,20 +9,53 @@ import {
   where,
   Timestamp,
   getDoc,
+  setDoc,
 } from "firebase/firestore";
 import { db } from "./config";
 import { Order } from "@/types/menu";
 
 const ORDERS_COLLECTION = "orders";
 
+/**
+ * Generate a short, user-friendly order ID
+ * Format: STARZ-XXXX where XXXX is a random alphanumeric string
+ */
+function generateOrderId(): string {
+  const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // Exclude confusing chars like 0, O, I, 1
+  const length = 6; // 6 characters = 1,073,741,824 possible combinations
+  let orderId = 'STARZ-';
+  
+  for (let i = 0; i < length; i++) {
+    orderId += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  
+  return orderId;
+}
+
 export async function createOrder(orderData: Omit<Order, "id" | "createdAt">): Promise<string> {
   try {
-    const docRef = await addDoc(collection(db, ORDERS_COLLECTION), {
+    // Generate a short, user-friendly order ID
+    let orderId = generateOrderId();
+    
+    // Check if order ID already exists (very unlikely but check anyway)
+    let attempts = 0;
+    while (attempts < 5) {
+      const orderDoc = await getDoc(doc(db, ORDERS_COLLECTION, orderId));
+      if (!orderDoc.exists()) {
+        break; // ID is unique, use it
+      }
+      orderId = generateOrderId(); // Generate new ID if collision
+      attempts++;
+    }
+    
+    // Create document with custom ID
+    await setDoc(doc(db, ORDERS_COLLECTION, orderId), {
       ...orderData,
       createdAt: Timestamp.now(),
       status: "pending",
     });
-    return docRef.id;
+    
+    return orderId;
   } catch (error) {
     console.error("Error creating order:", error);
     throw new Error("Failed to create order");
@@ -101,6 +134,25 @@ export async function updateOrderStatus(
   } catch (error) {
     console.error("Error updating order status:", error);
     throw new Error("Failed to update order status");
+  }
+}
+
+export async function updateOrderPayment(
+  orderId: string,
+  paymentData: {
+    paymentStatus?: string;
+    transactionId?: string;
+  }
+): Promise<void> {
+  try {
+    const orderRef = doc(db, ORDERS_COLLECTION, orderId);
+    await updateDoc(orderRef, {
+      ...paymentData,
+      updatedAt: Timestamp.now(),
+    });
+  } catch (error) {
+    console.error("Error updating order payment:", error);
+    throw new Error("Failed to update order payment");
   }
 }
 

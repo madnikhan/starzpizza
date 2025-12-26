@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import { getFoodImage } from "@/lib/menu-images";
+import { calculateItemPrice } from "@/lib/utils/price-calculator";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -31,8 +32,12 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
   };
 
   const handleConfirmAdd = () => {
+    // Calculate the total price including selected options
+    const finalPrice = calculateItemPrice(item, selectedOptions);
+    
     const cartItem: CartItem = {
       ...item,
+      price: finalPrice, // Override price with calculated price including options
       quantity: 1,
       selectedOptions,
     };
@@ -41,7 +46,14 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
     setSelectedOptions({});
   };
 
-  const imageUrl = item.imageUrl || item.image || getFoodImage(item.id, item.category, item.imageUrl);
+  const getImageUrl = () => {
+    const url = item.imageUrl || item.image || getFoodImage(item.id, item.category, item.imageUrl);
+    // If it's a local path (starts with /), Next.js handles it directly
+    // The path should match the filename exactly, including special characters
+    return url;
+  };
+
+  const imageUrl = getImageUrl();
   const fallbackUrl = `https://via.placeholder.com/400x300/DC2626/FFFFFF?text=${encodeURIComponent(item.name.substring(0, 20))}`;
 
   return (
@@ -55,7 +67,10 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
               fill
               className="object-cover"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-              onError={() => setImageError(true)}
+              onError={() => {
+                console.error('Image failed to load:', imageUrl);
+                setImageError(true);
+              }}
               unoptimized
             />
           ) : (
@@ -109,7 +124,7 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
                         }
                         className="mr-3"
                       />
-                      <span>{choice.label}</span>
+                      <span className="flex-1">{choice.label}</span>
                       {choice.price && (
                         <span className="ml-auto text-primary font-semibold">
                           +£{choice.price.toFixed(2)}
@@ -120,7 +135,16 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
                 </div>
               </div>
             ))}
-            <div className="flex gap-3">
+            {/* Display total price with selected options */}
+            <div className="mt-4 pt-4 border-t">
+              <div className="flex justify-between items-center">
+                <span className="font-semibold text-gray-700">Total Price:</span>
+                <span className="text-2xl font-bold text-primary">
+                  £{calculateItemPrice(item, selectedOptions).toFixed(2)}
+                </span>
+              </div>
+            </div>
+            <div className="flex gap-3 mt-4">
               <button
                 onClick={() => {
                   setShowModal(false);

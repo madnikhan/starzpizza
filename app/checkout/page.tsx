@@ -53,7 +53,83 @@ export default function CheckoutPage() {
         throw new Error(result.error || "Failed to place order");
       }
 
-      // Clear cart and redirect
+      // If card payment, create SumUp checkout
+      if (paymentMethod === "card") {
+        try {
+          // Check if test mode is enabled (for testing without real cards)
+          const testModeEnabled = process.env.NEXT_PUBLIC_ENABLE_TEST_PAYMENTS === 'true';
+          const paymentEndpoint = testModeEnabled ? "/api/payments/test" : "/api/payments/sumup";
+          
+          if (testModeEnabled) {
+            console.log("🧪 TEST MODE: Using simulated payment endpoint");
+          }
+          
+          const paymentResponse = await fetch(paymentEndpoint, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              orderId: result.orderId,
+              amount: total,
+              description: `Order ${result.orderId} - ${orderType}`,
+            }),
+          });
+
+          const paymentResult = await paymentResponse.json();
+
+          if (!paymentResponse.ok) {
+            const errorMessage = paymentResult.error || 
+                                paymentResult.details?.message || 
+                                (typeof paymentResult.details === 'string' ? paymentResult.details : JSON.stringify(paymentResult.details)) ||
+                                "Failed to create payment checkout";
+            console.error("Payment error details:", paymentResult);
+            throw new Error(errorMessage);
+          }
+
+          // Log the full response for debugging
+          console.log("Payment response:", paymentResult);
+
+          // Check if this is a test payment (simulated)
+          if (paymentResult.testMode) {
+            console.log("🧪 TEST MODE: Payment simulated successfully");
+            // For test mode, directly redirect to confirmation
+            clearCart();
+            router.push(`/order-confirmation?orderId=${result.orderId}`);
+            return;
+          }
+
+          // Validate checkout URL (for real SumUp payments)
+          if (!paymentResult.checkoutUrl) {
+            console.error("No checkout URL in response. Full response:", paymentResult);
+            throw new Error("Payment gateway did not provide a checkout URL. Please check server logs for details.");
+          }
+
+          // Validate URL format
+          if (!paymentResult.checkoutUrl.startsWith('http://') && !paymentResult.checkoutUrl.startsWith('https://')) {
+            console.error("Invalid checkout URL format:", paymentResult.checkoutUrl);
+            throw new Error("Invalid payment URL format received");
+          }
+
+          console.log("Redirecting to SumUp payment page:", paymentResult.checkoutUrl);
+          
+          // Redirect directly to SumUp payment page
+          // SumUp doesn't allow iframe embedding (X-Frame-Options), so we redirect directly
+          window.location.href = paymentResult.checkoutUrl;
+          return; // Don't clear cart yet, wait for payment confirmation via callback
+        } catch (paymentError) {
+          console.error("Error creating payment:", paymentError);
+          alert(
+            paymentError instanceof Error
+              ? paymentError.message
+              : "Failed to process payment. Please try again."
+          );
+          setIsSubmitting(false);
+          return;
+        }
+      }
+
+      // For cash payments, clear cart and redirect immediately
       clearCart();
       router.push(`/order-confirmation?orderId=${result.orderId}`);
     } catch (error) {
@@ -249,6 +325,7 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
+
     </>
   );
 }

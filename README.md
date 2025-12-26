@@ -8,7 +8,7 @@ A modern, full-stack online ordering system for STAR'Z takeaway restaurant.
 - **Language:** TypeScript
 - **Styling:** Tailwind CSS
 - **Database:** Firestore (Firebase)
-- **Payment:** Stripe
+- **Payment:** SumUp (Card Payments)
 - **State Management:** Zustand
 - **Form Handling:** React Hook Form
 - **Hosting:** Vercel
@@ -18,7 +18,7 @@ A modern, full-stack online ordering system for STAR'Z takeaway restaurant.
 - ✅ Menu display (Burgers, Pizzas, Shakes, Sides, Desserts)
 - ✅ Shopping cart functionality
 - ✅ Order types: Takeaway, Collection, Delivery
-- ✅ Payment options: Card (Stripe) and Cash on Delivery
+- ✅ Payment options: Card (SumUp) and Cash on Delivery
 - ✅ Order management system
 - ✅ Responsive design (mobile-first)
 - ✅ Real-time order tracking
@@ -58,13 +58,14 @@ NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=your-project.appspot.com
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
 NEXT_PUBLIC_FIREBASE_APP_ID=your_app_id
 
-# Stripe Payment
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=your_stripe_publishable_key
-STRIPE_SECRET_KEY=your_stripe_secret_key
+# SumUp Payment Gateway
+SUMUP_ACCESS_TOKEN=your_sumup_access_token
+SUMUP_MERCHANT_CODE=your_merchant_code
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
 See [FIRESTORE_SETUP.md](./FIRESTORE_SETUP.md) for detailed Firebase setup instructions.
+See [SUMUP_SETUP.md](./SUMUP_SETUP.md) for SumUp payment gateway setup instructions.
 
 ## Project Structure
 

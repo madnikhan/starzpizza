@@ -54,7 +54,11 @@ export const useCartStore = create<CartStore>()((set, get) => ({
       clearCart: () => set({ items: [] }),
       getTotal: () => {
         return get().items.reduce(
-          (total, item) => total + item.price * item.quantity,
+          (total, item) => {
+            // Use the stored price (which includes options) multiplied by quantity
+            // The price is already calculated with options when added to cart
+            return total + (item.price * item.quantity);
+          },
           0
         );
       },

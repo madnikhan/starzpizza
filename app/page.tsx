@@ -23,6 +23,7 @@ export default function Home() {
               width={120}
               height={120}
               className="object-contain"
+              style={{ width: 'auto', height: 'auto' }}
               priority
             />
           </div>
@@ -263,6 +264,7 @@ export default function Home() {
               width={100}
               height={100}
               className="object-contain"
+              style={{ width: 'auto', height: 'auto' }}
             />
           </div>
           <p className="text-lg font-semibold mb-2">STAR'Z Burger/Pizza & Shakes</p>

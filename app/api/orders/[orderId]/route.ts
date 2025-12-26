@@ -30,27 +30,39 @@ export async function PATCH(
   { params }: { params: { orderId: string } }
 ) {
   try {
-    const { status } = await request.json();
+    const body = await request.json();
+    const { status, paymentStatus, transactionId } = body;
     
-    if (!status) {
+    if (!status && !paymentStatus) {
       return NextResponse.json(
-        { error: "Status is required" },
+        { error: "Status or paymentStatus is required" },
         { status: 400 }
       );
     }
 
-    const validStatuses = ["pending", "confirmed", "preparing", "ready", "completed", "cancelled"];
-    if (!validStatuses.includes(status)) {
-      return NextResponse.json(
-        { error: "Invalid status" },
-        { status: 400 }
-      );
+    if (status) {
+      const validStatuses = ["pending", "confirmed", "preparing", "ready", "completed", "cancelled"];
+      if (!validStatuses.includes(status)) {
+        return NextResponse.json(
+          { error: "Invalid status" },
+          { status: 400 }
+        );
+      }
+
+      await updateOrderStatus(params.orderId, status);
     }
 
-    await updateOrderStatus(params.orderId, status);
+    // Update payment status if provided
+    if (paymentStatus || transactionId) {
+      const { updateOrderPayment } = await import("@/lib/firebase/orders");
+      await updateOrderPayment(params.orderId, {
+        paymentStatus,
+        transactionId,
+      });
+    }
     
     return NextResponse.json(
-      { success: true, message: "Order status updated" },
+      { success: true, message: "Order updated" },
       { status: 200 }
     );
   } catch (error) {
