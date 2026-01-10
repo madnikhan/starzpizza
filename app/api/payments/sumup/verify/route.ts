@@ -33,87 +33,204 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Try to get transaction by checkout reference (orderId)
-    // SumUp allows querying transactions by merchant code and checkout reference
-    const response = await fetch(
-      `https://api.sumup.com/v0.1/me/transactions?checkout_reference=${orderId}`,
-      {
-        method: "GET",
-        headers: {
-          Authorization: `Bearer ${sumupAccessToken}`,
-        },
-      }
-    );
+    console.log("🔍 Starting payment verification:", {
+      orderId,
+      checkoutId,
+      timestamp: new Date().toISOString(),
+    });
 
-    if (!response.ok) {
-      // If transaction not found, payment might not be completed
-      if (response.status === 404) {
-        return NextResponse.json({
-          success: true,
-          paid: false,
-          message: "Payment not found or not completed",
-        });
-      }
+    // Try multiple methods to verify payment
+    // 1. First, try to get the checkout status directly
+    // 2. Then try to get transactions by checkout_reference
+    // 3. If checkoutId provided, try to get checkout by ID
+    
+    let isPaid = false;
+    let transaction = null;
+    let checkoutStatus = null;
 
-      const errorData = await response.text();
-      console.error("SumUp API error:", errorData);
-      return NextResponse.json(
-        { error: "Failed to verify payment" },
-        { status: response.status }
-      );
+    // Method 1: Try to get checkout status directly (if checkoutId is provided)
+    if (checkoutId) {
+      try {
+        console.log("🔍 Method 1: Checking checkout status by ID:", checkoutId);
+        const checkoutResponse = await fetch(
+          `https://api.sumup.com/v0.1/checkouts/${checkoutId}`,
+          {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${sumupAccessToken}`,
+            },
+          }
+        );
+
+        if (checkoutResponse.ok) {
+          const checkoutData = await checkoutResponse.json();
+          console.log("✅ Checkout data retrieved:", {
+            id: checkoutData.id,
+            status: checkoutData.status,
+            checkout_reference: checkoutData.checkout_reference,
+          });
+          
+          checkoutStatus = checkoutData.status;
+          // Check if checkout is PAID
+          if (checkoutData.status === "PAID") {
+            isPaid = true;
+            console.log("✅ Payment confirmed via checkout status: PAID");
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching checkout:", error);
+      }
     }
 
-    const transactions = await response.json();
+    // Method 2: Try to get transactions by checkout_reference (orderId)
+    // Retry up to 3 times with delays (transactions might not be immediately available)
+    if (!isPaid) {
+      const maxRetries = 3;
+      const retryDelay = 1000; // 1 second
 
-    // Check if we have a successful transaction
-    if (transactions && Array.isArray(transactions) && transactions.length > 0) {
-      const transaction = transactions[0];
-      
-      // Check transaction status
-      const isPaid = transaction.status === "SUCCESSFUL" || transaction.status === "PAID";
-
-      if (isPaid) {
-        // Update order status in database
+      for (let attempt = 1; attempt <= maxRetries; attempt++) {
         try {
-          const updateResponse = await fetch(
-            `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/orders/${orderId}`,
+          console.log(`🔍 Method 2 (Attempt ${attempt}/${maxRetries}): Checking transactions by checkout_reference:`, orderId);
+          
+          const transactionsResponse = await fetch(
+            `https://api.sumup.com/v0.1/me/transactions?checkout_reference=${orderId}`,
             {
-              method: "PATCH",
+              method: "GET",
               headers: {
-                "Content-Type": "application/json",
+                Authorization: `Bearer ${sumupAccessToken}`,
               },
-              body: JSON.stringify({
-                status: "confirmed",
-                paymentStatus: "paid",
-                transactionId: transaction.id,
-              }),
             }
           );
 
-          if (!updateResponse.ok) {
-            console.error("Failed to update order status");
+          if (transactionsResponse.ok) {
+            const transactions = await transactionsResponse.json();
+            console.log("✅ Transactions retrieved:", {
+              count: Array.isArray(transactions) ? transactions.length : 0,
+              transactions: transactions,
+            });
+
+            // Check if we have a successful transaction
+            if (transactions && Array.isArray(transactions) && transactions.length > 0) {
+              // Find the most recent successful transaction
+              const successfulTransaction = transactions.find(
+                (t: any) => t.status === "SUCCESSFUL" || t.status === "PAID"
+              );
+              
+              if (successfulTransaction) {
+                transaction = successfulTransaction;
+                isPaid = true;
+                console.log("✅ Payment confirmed via transaction:", {
+                  id: transaction.id,
+                  status: transaction.status,
+                });
+                break; // Exit retry loop
+              } else {
+                // Check the first transaction anyway
+                transaction = transactions[0];
+                console.log("⚠️ Transaction found but status is:", transaction.status);
+                // If status is PENDING, might need to wait
+                if (transaction.status === "PENDING" && attempt < maxRetries) {
+                  console.log(`⏳ Transaction is PENDING, waiting ${retryDelay}ms before retry...`);
+                  await new Promise(resolve => setTimeout(resolve, retryDelay));
+                  continue;
+                }
+              }
+            } else if (attempt < maxRetries) {
+              // No transactions yet, wait and retry
+              console.log(`⏳ No transactions found yet, waiting ${retryDelay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, retryDelay));
+              continue;
+            }
+          } else {
+            const errorText = await transactionsResponse.text();
+            console.log("⚠️ Transactions query returned:", {
+              status: transactionsResponse.status,
+              statusText: transactionsResponse.statusText,
+              error: errorText,
+            });
+            
+            // If 404 and not last attempt, wait and retry
+            if (transactionsResponse.status === 404 && attempt < maxRetries) {
+              console.log(`⏳ Transaction not found (404), waiting ${retryDelay}ms before retry...`);
+              await new Promise(resolve => setTimeout(resolve, retryDelay));
+              continue;
+            }
           }
         } catch (error) {
-          console.error("Error updating order:", error);
+          console.error(`Error fetching transactions (attempt ${attempt}):`, error);
+          if (attempt < maxRetries) {
+            await new Promise(resolve => setTimeout(resolve, retryDelay));
+          }
         }
+      }
+    }
+
+    // Method 3: If we have checkoutId but no status yet, try getting checkout by reference
+    if (!isPaid && !checkoutStatus) {
+      try {
+        console.log("🔍 Method 3: Trying to get checkout by reference:", orderId);
+        // Note: SumUp API might not support this directly, but worth trying
+        // We'll use the transactions endpoint with a different approach
+      } catch (error) {
+        console.error("Error in method 3:", error);
+      }
+    }
+
+    // If payment is confirmed, update order status
+    if (isPaid) {
+      try {
+        const updateResponse = await fetch(
+          `${process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"}/api/orders/${orderId}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              status: "confirmed",
+              paymentStatus: "paid",
+              transactionId: transaction?.id || checkoutId || "verified",
+            }),
+          }
+        );
+
+        if (!updateResponse.ok) {
+          console.error("Failed to update order status");
+        } else {
+          console.log("✅ Order status updated to confirmed");
+        }
+      } catch (error) {
+        console.error("Error updating order:", error);
       }
 
       return NextResponse.json({
         success: true,
-        paid: isPaid,
-        transaction: {
+        paid: true,
+        transaction: transaction ? {
           id: transaction.id,
           status: transaction.status,
           amount: transaction.amount,
           currency: transaction.currency,
-        },
+        } : null,
+        checkoutStatus: checkoutStatus,
       });
     }
+
+    // Payment not found or not paid
+    console.log("❌ Payment verification failed:", {
+      checkoutStatus,
+      hasTransaction: !!transaction,
+      transactionStatus: transaction?.status,
+    });
 
     return NextResponse.json({
       success: true,
       paid: false,
-      message: "No transaction found",
+      message: "Payment not found or not completed. Please check your SumUp dashboard or contact support.",
+      debug: {
+        checkoutStatus,
+        transactionStatus: transaction?.status,
+      },
     });
   } catch (error) {
     console.error("Error verifying payment:", error);

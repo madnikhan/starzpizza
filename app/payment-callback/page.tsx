@@ -17,51 +17,81 @@ function PaymentCallbackContent() {
 
   useEffect(() => {
     const orderIdParam = searchParams.get("orderId");
-    const checkoutId = searchParams.get("checkout_id");
+    const checkoutId = searchParams.get("checkout_id") || searchParams.get("checkoutId");
     const statusParam = searchParams.get("status");
+    const transactionId = searchParams.get("transaction_id") || searchParams.get("transactionId");
+
+    console.log("📥 Payment callback received:", {
+      orderId: orderIdParam,
+      checkoutId,
+      status: statusParam,
+      transactionId,
+      allParams: Object.fromEntries(searchParams.entries()),
+    });
 
     if (!orderIdParam) {
       setStatus("failed");
-      setErrorMessage("Order ID not found");
+      setErrorMessage("Order ID not found in callback URL");
       return;
     }
 
     setOrderId(orderIdParam);
 
-    // Check payment status
+    // If status is explicitly PAID/SUCCESS, we can be more confident
+    // But still verify with backend for security
     if (statusParam === "PAID" || statusParam === "SUCCESS") {
-      // Verify payment with backend
-      verifyPayment(orderIdParam, checkoutId);
-    } else if (statusParam === "FAILED" || statusParam === "CANCELLED") {
-      setStatus("failed");
-      setErrorMessage("Payment was cancelled or failed");
-    } else {
-      // Try to verify payment status
-      verifyPayment(orderIdParam, checkoutId);
+      console.log("✅ Payment status from URL indicates success:", statusParam);
     }
+
+    // Always verify payment with backend (don't trust URL parameters alone)
+    // SumUp may redirect here even if payment wasn't completed
+    verifyPayment(orderIdParam, checkoutId);
   }, [searchParams]);
 
   const verifyPayment = async (orderId: string, checkoutId: string | null) => {
     try {
+      console.log("🔍 Verifying payment for order:", orderId);
       const response = await fetch(`/api/payments/sumup/verify?orderId=${orderId}&checkoutId=${checkoutId || ""}`);
       const result = await response.json();
 
-      if (result.success && result.paid) {
+      console.log("Payment verification result:", result);
+
+      // Only confirm if payment is actually verified as paid
+      if (result.success && result.paid === true) {
+        console.log("✅ Payment verified successfully");
         setStatus("success");
         // Clear cart after successful payment
         clearCart();
-        // Redirect to order confirmation after 3 seconds
+        // Redirect to order confirmation immediately (or after 2 seconds for user feedback)
         setTimeout(() => {
+          console.log("🔄 Redirecting to order confirmation...");
           router.push(`/order-confirmation?orderId=${orderId}`);
-        }, 3000);
+        }, 2000); // Reduced from 3 seconds to 2 seconds
       } else {
+        console.log("❌ Payment not verified or not paid:", result);
+        
+        // If URL indicates success but verification failed, it might be a timing issue
+        const urlStatus = searchParams.get("status");
+        if (urlStatus === "PAID" || urlStatus === "SUCCESS") {
+          setErrorMessage(
+            "Payment appears successful but verification is pending. " +
+            "Your payment may still be processing. Please wait a moment and refresh, " +
+            "or contact support with your order ID: " + orderId
+          );
+        } else {
+          setErrorMessage(
+            result.message || 
+            result.error || 
+            "Payment verification failed. Please contact support if you completed the payment. Order ID: " + orderId
+          );
+        }
+        
         setStatus("failed");
-        setErrorMessage(result.error || "Payment verification failed");
       }
     } catch (error) {
       console.error("Error verifying payment:", error);
       setStatus("failed");
-      setErrorMessage("Failed to verify payment status");
+      setErrorMessage("Failed to verify payment status. Please contact support.");
     }
   };
 

@@ -60,8 +60,14 @@ export default function CheckoutPage() {
           const testModeEnabled = process.env.NEXT_PUBLIC_ENABLE_TEST_PAYMENTS === 'true';
           const paymentEndpoint = testModeEnabled ? "/api/payments/test" : "/api/payments/sumup";
           
+          console.log("💳 Payment method: Card");
+          console.log("🔧 Test mode enabled:", testModeEnabled);
+          console.log("📡 Using payment endpoint:", paymentEndpoint);
+          
           if (testModeEnabled) {
-            console.log("🧪 TEST MODE: Using simulated payment endpoint");
+            console.log("🧪 TEST MODE: Using simulated payment endpoint (will bypass SumUp)");
+          } else {
+            console.log("✅ PRODUCTION MODE: Using SumUp payment endpoint");
           }
           
           const paymentResponse = await fetch(paymentEndpoint, {
@@ -78,17 +84,45 @@ export default function CheckoutPage() {
 
           const paymentResult = await paymentResponse.json();
 
-          if (!paymentResponse.ok) {
-            const errorMessage = paymentResult.error || 
-                                paymentResult.details?.message || 
-                                (typeof paymentResult.details === 'string' ? paymentResult.details : JSON.stringify(paymentResult.details)) ||
-                                "Failed to create payment checkout";
-            console.error("Payment error details:", paymentResult);
-            throw new Error(errorMessage);
-          }
-
           // Log the full response for debugging
-          console.log("Payment response:", paymentResult);
+          console.log("🔍 Payment API Response:", {
+            status: paymentResponse.status,
+            ok: paymentResponse.ok,
+            result: paymentResult,
+          });
+
+          if (!paymentResponse.ok) {
+            // Build a more helpful error message
+            let errorMessage = paymentResult.error || "Failed to create payment checkout";
+            
+            // Add hint if it's an authentication error
+            if (paymentResult.hint) {
+              errorMessage += `\n\n${paymentResult.hint}`;
+            }
+            
+            // Add details if available
+            if (paymentResult.details) {
+              const detailsStr = typeof paymentResult.details === 'string' 
+                ? paymentResult.details 
+                : JSON.stringify(paymentResult.details, null, 2);
+              console.error("❌ Payment error details:", {
+                status: paymentResult.status,
+                error: errorMessage,
+                details: paymentResult.details,
+              });
+              
+              // For 401 errors, show a more user-friendly message
+              if (paymentResult.status === 401) {
+                errorMessage = "Payment gateway authentication failed. Please contact support or check server configuration.";
+              }
+            } else {
+              console.error("❌ Payment error details:", paymentResult);
+            }
+            
+            alert(`Payment Error: ${errorMessage}`);
+            setIsSubmitting(false);
+            return;
+          }
 
           // Check if this is a test payment (simulated)
           if (paymentResult.testMode) {
@@ -101,22 +135,40 @@ export default function CheckoutPage() {
 
           // Validate checkout URL (for real SumUp payments)
           if (!paymentResult.checkoutUrl) {
-            console.error("No checkout URL in response. Full response:", paymentResult);
-            throw new Error("Payment gateway did not provide a checkout URL. Please check server logs for details.");
+            console.error("❌ No checkout URL in response. Full response:", JSON.stringify(paymentResult, null, 2));
+            console.error("Raw response data:", paymentResult.rawResponse);
+            alert("Payment gateway did not provide a checkout URL. Please check server logs for details.");
+            setIsSubmitting(false);
+            return;
           }
 
           // Validate URL format
           if (!paymentResult.checkoutUrl.startsWith('http://') && !paymentResult.checkoutUrl.startsWith('https://')) {
-            console.error("Invalid checkout URL format:", paymentResult.checkoutUrl);
-            throw new Error("Invalid payment URL format received");
+            console.error("❌ Invalid checkout URL format:", paymentResult.checkoutUrl);
+            alert(`Invalid payment URL format: ${paymentResult.checkoutUrl}`);
+            setIsSubmitting(false);
+            return;
           }
 
-          console.log("Redirecting to SumUp payment page:", paymentResult.checkoutUrl);
+          console.log("✅ Valid checkout URL received:", paymentResult.checkoutUrl);
+          console.log("🔄 Redirecting to SumUp payment page...");
           
           // Redirect directly to SumUp payment page
           // SumUp doesn't allow iframe embedding (X-Frame-Options), so we redirect directly
-          window.location.href = paymentResult.checkoutUrl;
-          return; // Don't clear cart yet, wait for payment confirmation via callback
+          try {
+            window.location.href = paymentResult.checkoutUrl;
+            // If redirect doesn't happen immediately, log it
+            console.log("Redirect command executed. If page doesn't redirect, check browser console for errors.");
+          } catch (redirectError) {
+            console.error("❌ Error during redirect:", redirectError);
+            alert("Failed to redirect to payment page. Please try again.");
+            setIsSubmitting(false);
+            return;
+          }
+          
+          // Don't clear cart yet, wait for payment confirmation via callback
+          // Note: setIsSubmitting(false) is not called here because we're redirecting
+          return;
         } catch (paymentError) {
           console.error("Error creating payment:", paymentError);
           alert(
