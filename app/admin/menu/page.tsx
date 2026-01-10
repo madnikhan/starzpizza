@@ -81,29 +81,49 @@ export default function MenuManagementPage() {
     }
   };
 
-  const handleMigrate = async () => {
-    if (!confirm("This will import all menu items from the static file into Firestore. Continue?")) {
-      return;
+  const handleMigrate = async (replace: boolean = false) => {
+    if (replace) {
+      const confirmed = confirm(
+        "⚠️ WARNING: This will DELETE all existing menu items and replace them with the new menu!\n\n" +
+        "This action cannot be undone. Are you sure you want to continue?"
+      );
+      if (!confirmed) return;
+    } else {
+      if (!confirm("This will import all menu items from the static file into Firestore. Continue?")) {
+        return;
+      }
     }
 
     try {
       setMigrating(true);
       const response = await fetch("/api/menu/migrate", {
         method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ replace }),
       });
       const data = await response.json();
 
       if (data.success) {
-        alert(
-          `Migration completed!\n` +
-          `✅ ${data.stats.migrated} items migrated\n` +
-          `⏭️ ${data.stats.skipped} items skipped (already exist)\n` +
-          `❌ ${data.stats.errors} errors`
-        );
+        if (replace) {
+          alert(
+            `✅ Menu replaced successfully!\n\n` +
+            `🗑️ ${data.stats.deleted} old items deleted\n` +
+            `➕ ${data.stats.migrated} new items added\n` +
+            `❌ ${data.stats.errors} errors`
+          );
+        } else {
+          alert(
+            `Migration completed!\n` +
+            `✅ ${data.stats.migrated} items migrated\n` +
+            `🔄 ${data.stats.updated || 0} items updated\n` +
+            `⏭️ ${data.stats.skipped || 0} items skipped (already exist)\n` +
+            `❌ ${data.stats.errors} errors`
+          );
+        }
         // Refresh the menu items list
         fetchMenuItems();
       } else {
-        alert("Migration failed: " + data.error);
+        alert("Migration failed: " + (data.error || "Unknown error"));
       }
     } catch (error) {
       console.error("Error migrating menu items:", error);
@@ -180,9 +200,9 @@ export default function MenuManagementPage() {
               </select>
             </div>
             <div className="flex items-center gap-2">
-              {menuItems.length === 0 && (
+              {menuItems.length === 0 ? (
                 <button
-                  onClick={handleMigrate}
+                  onClick={() => handleMigrate(false)}
                   disabled={migrating}
                   className="flex items-center gap-2 bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
                   title="Import existing menu items from static file to Firestore"
@@ -196,6 +216,25 @@ export default function MenuManagementPage() {
                     <>
                       <Upload className="w-5 h-5" />
                       Import Existing Menu
+                    </>
+                  )}
+                </button>
+              ) : (
+                <button
+                  onClick={() => handleMigrate(true)}
+                  disabled={migrating}
+                  className="flex items-center gap-2 bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-orange-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                  title="Replace all menu items with updated menu from static file"
+                >
+                  {migrating ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Replacing...
+                    </>
+                  ) : (
+                    <>
+                      <Upload className="w-5 h-5" />
+                      Replace All Menu Items
                     </>
                   )}
                 </button>

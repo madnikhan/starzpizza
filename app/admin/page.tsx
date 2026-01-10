@@ -821,30 +821,48 @@ function OrderCard({
 
         {/* Order Items */}
         <div className="mb-4">
-          <h4 className="font-semibold text-gray-700 mb-2">Items:</h4>
+          <h4 className="font-semibold text-gray-700 mb-3 flex items-center gap-2">
+            <Package className="w-5 h-5" />
+            Order Items ({order.items.length})
+          </h4>
           <div className="space-y-2">
             {order.items.map((item, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between bg-white border border-gray-200 rounded p-2"
+                className="bg-white border border-gray-200 rounded-lg p-3 hover:shadow-md transition"
               >
-                <div className="flex-1">
-                  <p className="font-medium text-gray-800">
-                    {item.quantity}x {item.name}
-                  </p>
-                  {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
-                    <p className="text-sm text-gray-600 ml-4">
-                      {Object.entries(item.selectedOptions).map(([key, value]) => (
-                        <span key={key} className="mr-2">
-                          {key}: {value}
-                        </span>
-                      ))}
+                <div className="flex items-start justify-between">
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="bg-primary text-white text-xs font-bold px-2 py-1 rounded">
+                        {item.quantity}x
+                      </span>
+                      <p className="font-semibold text-gray-800">{item.name}</p>
+                    </div>
+                    {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                      <div className="ml-6 mt-2 space-y-1">
+                        {Object.entries(item.selectedOptions).map(([key, value]) => (
+                          <div key={key} className="flex items-center gap-2">
+                            <span className="text-xs text-gray-500 font-medium">{key}:</span>
+                            <span className="text-sm text-gray-700 bg-gray-50 px-2 py-0.5 rounded">
+                              {value}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    <div className="ml-6 mt-1">
+                      <p className="text-xs text-gray-500">
+                        £{item.price.toFixed(2)} each
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-right ml-4">
+                    <p className="font-bold text-lg text-primary">
+                      £{(item.price * item.quantity).toFixed(2)}
                     </p>
-                  )}
+                  </div>
                 </div>
-                <p className="font-semibold text-gray-800">
-                  £{(item.price * item.quantity).toFixed(2)}
-                </p>
               </div>
             ))}
           </div>
