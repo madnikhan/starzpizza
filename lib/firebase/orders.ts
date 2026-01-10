@@ -4,6 +4,7 @@ import {
   getDocs, 
   doc, 
   updateDoc, 
+  deleteDoc,
   query, 
   orderBy,
   where,
@@ -142,17 +143,60 @@ export async function updateOrderPayment(
   paymentData: {
     paymentStatus?: string;
     transactionId?: string;
+    checkoutId?: string;
   }
 ): Promise<void> {
   try {
     const orderRef = doc(db, ORDERS_COLLECTION, orderId);
-    await updateDoc(orderRef, {
-      ...paymentData,
+    
+    // Filter out undefined values - Firebase doesn't accept undefined
+    const updateData: any = {
       updatedAt: Timestamp.now(),
-    });
+    };
+    
+    if (paymentData.paymentStatus !== undefined) {
+      updateData.paymentStatus = paymentData.paymentStatus;
+    }
+    if (paymentData.transactionId !== undefined) {
+      updateData.transactionId = paymentData.transactionId;
+    }
+    if (paymentData.checkoutId !== undefined) {
+      updateData.checkoutId = paymentData.checkoutId;
+    }
+    
+    console.log("💾 Updating order payment data:", updateData);
+    
+    await updateDoc(orderRef, updateData);
+    
+    console.log("✅ Order payment data updated successfully");
   } catch (error) {
     console.error("Error updating order payment:", error);
     throw new Error("Failed to update order payment");
   }
 }
 
+export async function updateOrder(
+  orderId: string,
+  orderData: Partial<Omit<Order, "id" | "createdAt">>
+): Promise<void> {
+  try {
+    const orderRef = doc(db, ORDERS_COLLECTION, orderId);
+    await updateDoc(orderRef, {
+      ...orderData,
+      updatedAt: Timestamp.now(),
+    });
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw new Error("Failed to update order");
+  }
+}
+
+export async function deleteOrder(orderId: string): Promise<void> {
+  try {
+    const orderRef = doc(db, ORDERS_COLLECTION, orderId);
+    await deleteDoc(orderRef);
+  } catch (error) {
+    console.error("Error deleting order:", error);
+    throw new Error("Failed to delete order");
+  }
+}

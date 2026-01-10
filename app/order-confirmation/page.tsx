@@ -14,43 +14,80 @@ function OrderConfirmationContent() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const fetchOrder = async () => {
     if (!orderId) {
       setError("Order ID not found");
       setLoading(false);
       return;
     }
 
-    // Fetch order details to verify payment status
-    const fetchOrder = async () => {
-      try {
-        const response = await fetch(`/api/orders/${orderId}`);
-        if (!response.ok) {
-          throw new Error("Order not found");
-        }
-        const result = await response.json();
-        const orderData = result.order || result; // Handle both response formats
-        setOrder(orderData);
+    try {
+      const response = await fetch(`/api/orders/${orderId}`);
+      if (!response.ok) {
+        throw new Error("Order not found");
+      }
+      const result = await response.json();
+      const orderData = result.order || result; // Handle both response formats
+      setOrder(orderData);
 
-        // For card payments, verify payment was actually made
-        if (orderData.paymentMethod === "card") {
-          // Check if order is confirmed and paid
-          if (orderData.status !== "confirmed" || orderData.paymentStatus !== "paid") {
-            // Order exists but payment not verified - redirect to payment or show pending message
-            setError("Payment not completed. Please complete your payment to confirm your order.");
+      // For card payments, verify payment was actually made
+      if (orderData.paymentMethod === "card") {
+        // Check if order is confirmed and paid
+        if (orderData.status !== "confirmed" || orderData.paymentStatus !== "paid") {
+          // Order exists but payment not verified - try to verify payment
+          console.log("🔄 Order payment not confirmed, attempting verification...");
+          try {
+            const verifyResponse = await fetch(`/api/payments/sumup/verify?orderId=${orderId}`);
+            const verifyResult = await verifyResponse.json();
+            
+            console.log("📋 Payment verification result:", verifyResult);
+            
+            if (verifyResult.success && verifyResult.paid === true) {
+              // Payment verified! Refresh order data
+              console.log("✅ Payment verified! Refreshing order...");
+              const refreshResponse = await fetch(`/api/orders/${orderId}`);
+              if (refreshResponse.ok) {
+                const refreshResult = await refreshResponse.json();
+                const refreshedOrder = refreshResult.order || refreshResult;
+                setOrder(refreshedOrder);
+                
+                // Check again
+                if (refreshedOrder.status === "confirmed" || refreshedOrder.paymentStatus === "paid") {
+                  setLoading(false);
+                  return; // Show success
+                }
+              }
+            }
+            
+            // If verification failed or payment not found, show helpful message
+            setError(
+              "Payment verification is pending. " +
+              "If you completed the payment on SumUp, it may still be processing. " +
+              "Please wait a few minutes and refresh this page, or contact support with your order ID."
+            );
+            setLoading(false);
+            return;
+          } catch (verifyError) {
+            console.error("Error verifying payment:", verifyError);
+            setError(
+              "Payment verification failed. " +
+              "If you completed the payment, please contact support with your order ID: " + orderId
+            );
             setLoading(false);
             return;
           }
         }
-        // For cash payments, it's okay to show confirmation even if status is pending
-        setLoading(false);
-      } catch (err) {
-        console.error("Error fetching order:", err);
-        setError(err instanceof Error ? err.message : "Failed to load order");
-        setLoading(false);
       }
-    };
+      // For cash payments, it's okay to show confirmation even if status is pending
+      setLoading(false);
+    } catch (err) {
+      console.error("Error fetching order:", err);
+      setError(err instanceof Error ? err.message : "Failed to load order");
+      setLoading(false);
+    }
+  };
 
+  useEffect(() => {
     fetchOrder();
   }, [orderId]);
 
@@ -82,11 +119,21 @@ function OrderConfirmationContent() {
               </p>
             )}
             <div className="space-y-3 mt-6">
+              <button
+                onClick={() => {
+                  setLoading(true);
+                  setError(null);
+                  fetchOrder();
+                }}
+                className="inline-block bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
+              >
+                Check Payment Status
+              </button>
               <Link
                 href="/checkout"
                 className="inline-block bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-dark transition"
               >
-                Complete Payment
+                Try Payment Again
               </Link>
               <Link
                 href="/"
@@ -94,6 +141,13 @@ function OrderConfirmationContent() {
               >
                 Return to Home
               </Link>
+              {orderId && (
+                <p className="text-xs text-gray-500 mt-4">
+                  Order ID: <span className="font-mono font-semibold">{orderId}</span>
+                  <br />
+                  Please save this order ID and contact support if payment was completed.
+                </p>
+              )}
             </div>
           </div>
         </div>

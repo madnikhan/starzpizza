@@ -31,11 +31,11 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json();
-    const { status, paymentStatus, transactionId } = body;
+    const { status, paymentStatus, transactionId, checkoutId } = body;
     
-    if (!status && !paymentStatus) {
+    if (!status && !paymentStatus && !checkoutId) {
       return NextResponse.json(
-        { error: "Status or paymentStatus is required" },
+        { error: "Status, paymentStatus, or checkoutId is required" },
         { status: 400 }
       );
     }
@@ -53,12 +53,23 @@ export async function PATCH(
     }
 
     // Update payment status if provided
-    if (paymentStatus || transactionId) {
+    // Only include fields that are actually provided (not undefined)
+    if (paymentStatus !== undefined || transactionId !== undefined || checkoutId !== undefined) {
       const { updateOrderPayment } = await import("@/lib/firebase/orders");
-      await updateOrderPayment(params.orderId, {
-        paymentStatus,
-        transactionId,
-      });
+      const paymentUpdate: any = {};
+      
+      if (paymentStatus !== undefined) {
+        paymentUpdate.paymentStatus = paymentStatus;
+      }
+      if (transactionId !== undefined) {
+        paymentUpdate.transactionId = transactionId;
+      }
+      if (checkoutId !== undefined) {
+        paymentUpdate.checkoutId = checkoutId;
+      }
+      
+      console.log("📝 Updating order with payment data:", paymentUpdate);
+      await updateOrderPayment(params.orderId, paymentUpdate);
     }
     
     return NextResponse.json(

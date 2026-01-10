@@ -133,6 +133,35 @@ export default function CheckoutPage() {
             return;
           }
 
+          // Store checkout_id in the order for later verification
+          if (paymentResult.checkoutId) {
+            try {
+              console.log("💾 Attempting to store checkout_id:", paymentResult.checkoutId, "for order:", result.orderId);
+              const storeResponse = await fetch(`/api/orders/${result.orderId}`, {
+                method: "PATCH",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  checkoutId: paymentResult.checkoutId,
+                }),
+              });
+              
+              if (storeResponse.ok) {
+                const storeResult = await storeResponse.json();
+                console.log("✅ Successfully stored checkout_id in order:", paymentResult.checkoutId, storeResult);
+              } else {
+                const errorData = await storeResponse.json();
+                console.error("❌ Failed to store checkout_id - API error:", storeResponse.status, errorData);
+              }
+            } catch (error) {
+              console.error("❌ Failed to store checkout_id - Network error:", error);
+              // Don't fail the payment flow if this fails
+            }
+          } else {
+            console.warn("⚠️ No checkoutId in payment result:", paymentResult);
+          }
+
           // Validate checkout URL (for real SumUp payments)
           if (!paymentResult.checkoutUrl) {
             console.error("❌ No checkout URL in response. Full response:", JSON.stringify(paymentResult, null, 2));
@@ -153,12 +182,32 @@ export default function CheckoutPage() {
           console.log("✅ Valid checkout URL received:", paymentResult.checkoutUrl);
           console.log("🔄 Redirecting to SumUp payment page...");
           
+          // Save checkout info to localStorage before redirect (so we can see it after return)
+          try {
+            const checkoutInfo = {
+              orderId: result.orderId,
+              checkoutId: paymentResult.checkoutId,
+              checkoutUrl: paymentResult.checkoutUrl,
+              amount: total,
+              timestamp: new Date().toISOString(),
+              rawResponse: paymentResult.rawResponse,
+            };
+            localStorage.setItem('lastCheckoutInfo', JSON.stringify(checkoutInfo));
+            console.log("💾 Checkout info saved to localStorage:", checkoutInfo);
+          } catch (e) {
+            console.error("Failed to save checkout info:", e);
+          }
+          
           // Redirect directly to SumUp payment page
           // SumUp doesn't allow iframe embedding (X-Frame-Options), so we redirect directly
           try {
-            window.location.href = paymentResult.checkoutUrl;
+            // Small delay to ensure logs are saved
+            setTimeout(() => {
+              window.location.href = paymentResult.checkoutUrl;
+            }, 100);
             // If redirect doesn't happen immediately, log it
             console.log("Redirect command executed. If page doesn't redirect, check browser console for errors.");
+            console.log("📋 IMPORTANT: After payment, check your SERVER TERMINAL for SumUp API logs!");
           } catch (redirectError) {
             console.error("❌ Error during redirect:", redirectError);
             alert("Failed to redirect to payment page. Please try again.");

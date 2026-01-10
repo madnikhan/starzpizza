@@ -165,7 +165,15 @@ export async function POST(request: NextRequest) {
     // SumUp returns: { id, checkout_reference, status, return_url, ... } but NO payment redirect_url
     const checkoutId = checkoutResult.id || 
                       checkoutResult.checkout_id || 
-                      checkoutResult.uuid;
+                      checkoutResult.uuid ||
+                      checkoutResult.checkoutId;
+    
+    console.log("🔑 Extracted checkout_id:", checkoutId);
+    console.log("🔑 Full checkout result keys:", Object.keys(checkoutResult));
+    if (!checkoutId) {
+      console.error("❌ CRITICAL: No checkout_id found in SumUp response!");
+      console.error("Full response:", JSON.stringify(checkoutResult, null, 2));
+    }
 
     // Check for hosted_checkout_url first (if hosted checkout is enabled)
     // This is the preferred method as it provides a direct payment URL
@@ -270,12 +278,33 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // CRITICAL: Ensure checkoutId is always included
+    const finalCheckoutId = checkoutId || checkoutResult.id || checkoutResult.checkout_id || checkoutResult.uuid;
+    
+    if (!finalCheckoutId) {
+      console.error("❌ CRITICAL ERROR: Cannot proceed without checkout_id!");
+      return NextResponse.json(
+        { 
+          error: "Failed to get checkout ID from payment gateway",
+          details: "SumUp did not return a checkout ID. Please check server logs.",
+          rawResponse: checkoutResult,
+        },
+        { status: 500 }
+      );
+    }
+    
     const responseData = {
       success: true,
-      checkoutId: checkoutId || checkoutResult.id || checkoutResult.checkout_id,
+      checkoutId: finalCheckoutId, // Always include checkout_id
       checkoutUrl: finalCheckoutUrl,
       rawResponse: checkoutResult, // Include full response for debugging
     };
+    
+    console.log("✅ Final response data:", {
+      hasCheckoutId: !!responseData.checkoutId,
+      checkoutId: responseData.checkoutId,
+      hasCheckoutUrl: !!responseData.checkoutUrl,
+    });
 
     console.log("✅ Returning checkout data:", {
       checkoutId: responseData.checkoutId,

@@ -15,11 +15,13 @@ service cloud.firestore {
       // In production, you might want to restrict this to order owners
       allow read: if true;
       
-      // Allow updates to status and payment info (for admin and payment callbacks)
-      allow update: if request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt', 'paymentStatus', 'transactionId']);
+      // Allow updates to all fields (for admin dashboard)
+      // In production, add authentication check here
+      allow update: if true;
       
-      // No deletes for now
-      allow delete: if false;
+      // Allow deletes (for admin dashboard)
+      // In production, add authentication check here
+      allow delete: if true;
     }
     
     // Menu items (read-only for public)
