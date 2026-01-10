@@ -24,10 +24,12 @@ service cloud.firestore {
       allow delete: if true;
     }
     
-    // Menu items (read-only for public)
+    // Menu items (read-only for public, write for admin)
     match /menu/{itemId} {
       allow read: if true;
-      allow write: if false; // Only admins can write (add auth later)
+      allow create: if true; // Allow creation (admin dashboard)
+      allow update: if true; // Allow updates (admin dashboard)
+      allow delete: if true; // Allow deletes (admin dashboard)
     }
   }
 }

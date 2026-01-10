@@ -26,7 +26,8 @@ import {
   X,
   Save,
   LogOut,
-  User
+  User,
+  Utensils
 } from "lucide-react";
 import Link from "next/link";
 
@@ -548,6 +549,13 @@ export default function AdminDashboard() {
                 <LogOut className="w-5 h-5" />
                 Logout
               </button>
+              <Link
+                href="/admin/menu"
+                className="flex items-center gap-2 bg-purple-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-purple-700 transition"
+              >
+                <Utensils className="w-5 h-5" />
+                Manage Menu
+              </Link>
               <Link
                 href="/"
                 className="flex items-center gap-2 bg-white text-primary px-4 py-2 rounded-lg font-semibold hover:bg-gray-100 transition"
