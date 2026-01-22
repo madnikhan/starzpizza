@@ -7,6 +7,7 @@ import { Plus, Minus } from "lucide-react";
 import Image from "next/image";
 import { getFoodImage } from "@/lib/menu-images";
 import { calculateItemPrice } from "@/lib/utils/price-calculator";
+import { useIsRestaurantOpen } from "@/hooks/useRestaurantStatus";
 
 interface MenuItemCardProps {
   item: MenuItem;
@@ -14,11 +15,17 @@ interface MenuItemCardProps {
 
 export default function MenuItemCard({ item }: MenuItemCardProps) {
   const { addItem } = useCartStore();
+  const { isOpen } = useIsRestaurantOpen();
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [showModal, setShowModal] = useState(false);
   const [imageError, setImageError] = useState(false);
 
   const handleAddToCart = () => {
+    if (!isOpen) {
+      alert("Sorry, the restaurant is currently closed. We are not accepting orders at this time.");
+      return;
+    }
+    
     if (item.options && item.options.length > 0) {
       setShowModal(true);
     } else {
@@ -91,7 +98,9 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
             <span className="text-2xl font-bold text-primary">£{item.price.toFixed(2)}</span>
             <button
               onClick={handleAddToCart}
-              className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition flex items-center gap-2"
+              disabled={!isOpen}
+              className="bg-primary text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-dark transition flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              title={!isOpen ? "Restaurant is currently closed" : "Add to cart"}
             >
               <Plus size={20} />
               Add
@@ -156,9 +165,10 @@ export default function MenuItemCard({ item }: MenuItemCardProps) {
               </button>
               <button
                 onClick={handleConfirmAdd}
-                className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark"
+                disabled={!isOpen}
+                className="flex-1 bg-primary text-white py-3 rounded-lg font-semibold hover:bg-primary-dark disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Add to Cart
+                {!isOpen ? "Restaurant Closed" : "Add to Cart"}
               </button>
             </div>
           </div>

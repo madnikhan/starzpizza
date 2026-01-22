@@ -4,12 +4,15 @@ import Link from "next/link";
 import Image from "next/image";
 import { ShoppingCart } from "lucide-react";
 import { useCartStore } from "@/lib/store/cart-store";
+import RestaurantStatusBanner from "./RestaurantStatusBanner";
 
 export default function Header() {
   const itemCount = useCartStore((state) => state.getItemCount());
 
   return (
-    <header className="bg-primary text-white shadow-lg sticky top-0 z-40">
+    <>
+      <RestaurantStatusBanner />
+      <header className="bg-primary text-white shadow-lg sticky top-0 z-40">
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <Link href="/" className="hover:opacity-80 transition flex items-center gap-3">
@@ -50,6 +53,7 @@ export default function Header() {
         </div>
       </div>
     </header>
+    </>
   );
 }
 

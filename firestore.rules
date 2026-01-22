@@ -31,6 +31,12 @@ service cloud.firestore {
       allow update: if true; // Allow updates (admin dashboard)
       allow delete: if true; // Allow deletes (admin dashboard)
     }
+    
+    // Restaurant status - public read, write for admin
+    match /restaurant_status/{document=**} {
+      allow read: if true; // Anyone can read status
+      allow write: if true; // For now, allow writes (should be restricted to admins later)
+    }
   }
 }
 

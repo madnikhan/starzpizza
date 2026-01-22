@@ -1,11 +1,13 @@
 "use client";
 
 import { useCartStore } from "@/lib/store/cart-store";
-import { Minus, Plus, Trash2, ShoppingCart } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, AlertCircle } from "lucide-react";
 import Link from "next/link";
+import { useIsRestaurantOpen } from "@/hooks/useRestaurantStatus";
 
 export default function Cart() {
   const { items, updateQuantity, removeItem, getTotal, clearCart } = useCartStore();
+  const { isOpen, message } = useIsRestaurantOpen();
   const total = getTotal();
 
   if (items.length === 0) {
@@ -98,6 +100,20 @@ export default function Cart() {
           </div>
 
           <div className="bg-white rounded-lg shadow-md p-6">
+            {!isOpen && (
+              <div className="bg-red-50 border-2 border-red-500 rounded-lg p-4 mb-6">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h3 className="font-bold text-red-800 mb-1">Restaurant Currently Closed</h3>
+                    <p className="text-sm text-red-700">
+                      {message || "We are not accepting orders at this time. Please check back later."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             <div className="space-y-3 mb-6">
               <div className="flex justify-between text-lg">
                 <span className="text-gray-600">Subtotal</span>
@@ -113,9 +129,19 @@ export default function Cart() {
 
             <Link
               href="/checkout"
-              className="block w-full bg-primary text-white text-center py-4 rounded-lg font-bold text-lg hover:bg-primary-dark transition"
+              className={`block w-full text-white text-center py-4 rounded-lg font-bold text-lg transition ${
+                isOpen
+                  ? "bg-primary hover:bg-primary-dark"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={(e) => {
+                if (!isOpen) {
+                  e.preventDefault();
+                  alert("Sorry, the restaurant is currently closed. We are not accepting orders at this time.");
+                }
+              }}
             >
-              Proceed to Checkout
+              {isOpen ? "Proceed to Checkout" : "Restaurant Closed"}
             </Link>
           </div>
         </div>

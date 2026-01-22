@@ -6,6 +6,7 @@ import { collection, query, orderBy, onSnapshot, Timestamp, doc, updateDoc, dele
 import { db } from "@/lib/firebase/config";
 import { Order, CartItem, OrderType, PaymentMethod } from "@/types/menu";
 import { isAuthenticated, logout, getCurrentUser } from "@/lib/auth";
+import { useRestaurantStatus } from "@/hooks/useRestaurantStatus";
 import { 
   CheckCircle2, 
   Clock, 
@@ -27,7 +28,9 @@ import {
   Save,
   LogOut,
   User,
-  Utensils
+  Utensils,
+  Store,
+  StoreClosed
 } from "lucide-react";
 import Link from "next/link";
 
@@ -218,8 +221,12 @@ export default function AdminDashboard() {
   const [editingOrder, setEditingOrder] = useState<Order | null>(null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState<string | null>(null);
   const [isAuthChecked, setIsAuthChecked] = useState(false);
+  const [updatingStatus, setUpdatingStatus] = useState(false);
   const processedOrdersRef = useRef<Set<string>>(new Set());
   const notificationIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  
+  // Get restaurant status
+  const { status: restaurantStatus } = useRestaurantStatus();
 
   // Check authentication on mount
   useEffect(() => {
@@ -448,6 +455,36 @@ export default function AdminDashboard() {
     return orders.filter((o) => o.status === activeTab);
   };
 
+  const toggleRestaurantStatus = async () => {
+    if (updatingStatus) return;
+    
+    setUpdatingStatus(true);
+    try {
+      const newStatus = !restaurantStatus.isOpen;
+      const response = await fetch("/api/restaurant-status", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          isOpen: newStatus,
+          updatedBy: getCurrentUser()?.email || "admin",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update restaurant status");
+      }
+
+      alert(`Restaurant is now ${newStatus ? "OPEN" : "CLOSED"}`);
+    } catch (error) {
+      console.error("Error updating restaurant status:", error);
+      alert("Failed to update restaurant status. Please try again.");
+    } finally {
+      setUpdatingStatus(false);
+    }
+  };
+
   const tabs: { id: TabType; label: string; count: number }[] = [
     { id: "all", label: "All Orders", count: orders.length },
     { id: "pending", label: "Pending", count: orders.filter((o) => o.status === "pending").length },
@@ -484,6 +521,28 @@ export default function AdminDashboard() {
                 <User className="w-4 h-4" />
                 {getCurrentUser()?.email || "Admin"}
               </div>
+              <button
+                onClick={toggleRestaurantStatus}
+                disabled={updatingStatus}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-semibold transition disabled:opacity-50 ${
+                  restaurantStatus.isOpen
+                    ? "bg-green-600 text-white hover:bg-green-700"
+                    : "bg-red-600 text-white hover:bg-red-700"
+                }`}
+                title={restaurantStatus.isOpen ? "Click to close restaurant" : "Click to open restaurant"}
+              >
+                {restaurantStatus.isOpen ? (
+                  <>
+                    <Store className="w-5 h-5" />
+                    Restaurant Open
+                  </>
+                ) : (
+                  <>
+                    <StoreClosed className="w-5 h-5" />
+                    Restaurant Closed
+                  </>
+                )}
+              </button>
               <button
                 onClick={() => {
                   // Initialize audio on click (user interaction)

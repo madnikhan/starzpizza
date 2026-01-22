@@ -1,14 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useCartStore } from "@/lib/store/cart-store";
 import { OrderType, PaymentMethod } from "@/types/menu";
 import { useRouter } from "next/navigation";
 import Header from "@/components/Header";
+import { useIsRestaurantOpen } from "@/hooks/useRestaurantStatus";
+import { AlertCircle } from "lucide-react";
 
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, getTotal, clearCart } = useCartStore();
+  const { isOpen, loading: statusLoading, message } = useIsRestaurantOpen();
   const [orderType, setOrderType] = useState<OrderType>("takeaway");
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
   const [customerInfo, setCustomerInfo] = useState({
@@ -19,12 +22,26 @@ export default function CheckoutPage() {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Redirect if restaurant is closed
+  useEffect(() => {
+    if (!statusLoading && !isOpen) {
+      // Don't redirect, just show message and disable form
+    }
+  }, [isOpen, statusLoading]);
+
   const subtotal = getTotal();
   const deliveryFee = orderType === "delivery" ? 2.5 : 0;
   const total = subtotal + deliveryFee;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Block submission if restaurant is closed
+    if (!isOpen) {
+      alert("Sorry, the restaurant is currently closed. We are not accepting orders at this time.");
+      return;
+    }
+    
     setIsSubmitting(true);
 
     try {
@@ -249,6 +266,23 @@ export default function CheckoutPage() {
           <div className="max-w-4xl mx-auto">
           <h1 className="text-3xl font-bold text-gray-800 mb-8">Checkout</h1>
 
+          {!isOpen && (
+            <div className="bg-red-50 border-2 border-red-500 rounded-lg p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <AlertCircle className="w-6 h-6 text-red-600 flex-shrink-0 mt-1" />
+                <div>
+                  <h3 className="text-xl font-bold text-red-800 mb-2">Restaurant Currently Closed</h3>
+                  <p className="text-red-700 mb-2">
+                    {message || "We are not accepting orders at this time. Please check back later."}
+                  </p>
+                  <p className="text-sm text-red-600">
+                    You can browse our menu, but you won't be able to place an order until we reopen.
+                  </p>
+                </div>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="grid md:grid-cols-2 gap-8">
             {/* Left Column - Order Details */}
             <div className="space-y-6">
@@ -415,10 +449,10 @@ export default function CheckoutPage() {
 
                 <button
                   type="submit"
-                  disabled={isSubmitting || items.length === 0}
+                  disabled={isSubmitting || items.length === 0 || !isOpen}
                   className="w-full mt-6 bg-primary text-white py-4 rounded-lg font-bold text-lg hover:bg-primary-dark transition disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isSubmitting ? "Placing Order..." : paymentMethod === "card" ? "Pay with Card" : "Place Order"}
+                  {isSubmitting ? "Placing Order..." : !isOpen ? "Restaurant Closed" : paymentMethod === "card" ? "Pay with Card" : "Place Order"}
                 </button>
               </div>
             </div>
