@@ -29,8 +29,8 @@ import {
   LogOut,
   User,
   Utensils,
-  Store,
-  StoreClosed
+  Building2,
+  Lock
 } from "lucide-react";
 import Link from "next/link";
 
@@ -533,12 +533,12 @@ export default function AdminDashboard() {
               >
                 {restaurantStatus.isOpen ? (
                   <>
-                    <Store className="w-5 h-5" />
+                    <Building2 className="w-5 h-5" />
                     Restaurant Open
                   </>
                 ) : (
                   <>
-                    <StoreClosed className="w-5 h-5" />
+                    <Lock className="w-5 h-5" />
                     Restaurant Closed
                   </>
                 )}
