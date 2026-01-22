@@ -9,6 +9,14 @@
  * - Any ESC/POS compatible Bluetooth thermal printer
  */
 
+// Type definitions for Web Bluetooth API (browser-only types)
+// These are only available in the browser, not during build
+// Using 'any' for browser-specific types to avoid build-time errors
+type BluetoothDevice = any;
+type BluetoothRemoteGATTServer = any;
+type BluetoothRemoteGATTService = any;
+type BluetoothRemoteGATTCharacteristic = any;
+
 // ESC/POS command constants
 const ESC = '\x1B';
 const GS = '\x1D';
@@ -41,9 +49,14 @@ class BluetoothPrinterService {
       throw new Error('Web Bluetooth API is not supported in this browser. Please use Chrome or Edge.');
     }
 
+    const bluetooth = (navigator as any).bluetooth;
+    if (!bluetooth) {
+      throw new Error('Web Bluetooth API is not available.');
+    }
+
     try {
       // Request Bluetooth device
-      this.printer.device = await navigator.bluetooth.requestDevice({
+      this.printer.device = await bluetooth.requestDevice({
         filters: [
           { namePrefix: 'BIXOLON' }, // Bixolon printers
           { namePrefix: 'XP-' },     // Xprinter
