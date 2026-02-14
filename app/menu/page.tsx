@@ -5,17 +5,22 @@ import Header from "@/components/Header";
 
 // Category images mapping
 const categoryImages: Record<string, string> = {
+  "kebabs": "https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&h=400&fit=crop&q=80",
   "smash-burgers": "https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=400&fit=crop&q=80",
-  "chicken-burgers": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&h=400&fit=crop&q=80",
+  "wraps": "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=400&fit=crop&q=80",
   "pizzas": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop&q=80",
   "loaded-fries": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop&q=80",
-  "shakes": "https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&h=400&fit=crop&q=80",
+  "munch-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=400&fit=crop&q=80",
+  "chicken-burgers": "https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&h=400&fit=crop&q=80",
   "sides": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop&q=80",
-  "dips": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop&q=80",
   "tenders": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&h=400&fit=crop&q=80",
+  "calzone": "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&h=400&fit=crop&q=80",
+  "dips": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop&q=80",
+  "dipping-pots": "https://images.unsplash.com/photo-1573080496219-bb080dd4f877?w=600&h=400&fit=crop&q=80",
   "desserts": "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=600&h=400&fit=crop&q=80",
-  "special-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=400&fit=crop&q=80",
   "drinks": "https://images.unsplash.com/photo-1554866585-cd94860890b7?w=600&h=400&fit=crop&q=80",
+  "kids-menu": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?w=600&h=400&fit=crop&q=80",
+  "special-boxes": "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=400&fit=crop&q=80",
 };
 
 export default function MenuPage() {

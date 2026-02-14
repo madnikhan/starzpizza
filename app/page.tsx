@@ -111,7 +111,28 @@ export default function Home() {
         </div>
 
         {/* Menu Categories */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <Link
+            href="/menu/kebabs"
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
+          >
+            <div className="relative h-48 w-full overflow-hidden">
+              <Image
+                src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&h=400&fit=crop&q=80"
+                alt="Kebabs"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Kebabs</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600">Doner, Shish, Chicken & Special</p>
+            </div>
+          </Link>
+
           <Link
             href="/menu/smash-burgers"
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
@@ -119,19 +140,17 @@ export default function Home() {
             <div className="relative h-48 w-full overflow-hidden">
               <Image
                 src="https://images.unsplash.com/photo-1550547660-d9450f859349?w=600&h=400&fit=crop&q=80"
-                alt="Burgers"
+                alt="Smash Burgers"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Burgers</h3>
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Smash Burgers</h3>
               </div>
             </div>
             <div className="p-6">
-              <p className="text-gray-600">
-                Smash Burgers, Chicken Burgers & More
-              </p>
+              <p className="text-gray-600">The Smash King, Angus, Gringo & More</p>
             </div>
           </Link>
 
@@ -145,35 +164,35 @@ export default function Home() {
                 alt="Pizzas"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <h3 className="text-3xl font-bold text-white drop-shadow-lg">Pizzas</h3>
               </div>
             </div>
             <div className="p-6">
-              <p className="text-gray-600">9", 12", 15" - All Your Favorites</p>
+              <p className="text-gray-600">9", 12", 14" - All Your Favorites</p>
             </div>
           </Link>
 
           <Link
-            href="/menu/shakes"
+            href="/menu/wraps"
             className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
           >
             <div className="relative h-48 w-full overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=600&h=400&fit=crop&q=80"
-                alt="Shakes"
+                src="https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=600&h=400&fit=crop&q=80"
+                alt="Wraps"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
-                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Shakes</h3>
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Wraps</h3>
               </div>
             </div>
             <div className="p-6">
-              <p className="text-gray-600">13 Delicious Flavors</p>
+              <p className="text-gray-600">Kebab & Tender Wraps</p>
             </div>
           </Link>
 
@@ -187,7 +206,7 @@ export default function Home() {
                 alt="Loaded Fries"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <h3 className="text-3xl font-bold text-white drop-shadow-lg">Loaded Fries</h3>
@@ -195,6 +214,48 @@ export default function Home() {
             </div>
             <div className="p-6">
               <p className="text-gray-600">Vaca, Doner, Chica Fritas</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/menu/munch-boxes"
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
+          >
+            <div className="relative h-48 w-full overflow-hidden">
+              <Image
+                src="https://images.unsplash.com/photo-1551782450-17144efb9c50?w=600&h=400&fit=crop&q=80"
+                alt="Munch Boxes"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Munch Boxes</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600">Snack, Grafter & All In One</p>
+            </div>
+          </Link>
+
+          <Link
+            href="/menu/chicken-burgers"
+            className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition transform hover:-translate-y-1"
+          >
+            <div className="relative h-48 w-full overflow-hidden">
+              <Image
+                src="https://images.unsplash.com/photo-1606755962773-d324e0a13086?w=600&h=400&fit=crop&q=80"
+                alt="Chicken Burgers"
+                fill
+                className="object-cover"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
+                <h3 className="text-3xl font-bold text-white drop-shadow-lg">Chicken Burgers</h3>
+              </div>
+            </div>
+            <div className="p-6">
+              <p className="text-gray-600">Buttermilk Crispy & Veggie Delight</p>
             </div>
           </Link>
 
@@ -208,7 +269,7 @@ export default function Home() {
                 alt="Sides"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <h3 className="text-3xl font-bold text-white drop-shadow-lg">Sides</h3>
@@ -229,7 +290,7 @@ export default function Home() {
                 alt="Desserts"
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
               />
               <div className="absolute inset-0 bg-black bg-opacity-40 flex items-center justify-center">
                 <h3 className="text-3xl font-bold text-white drop-shadow-lg">Desserts</h3>
