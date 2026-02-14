@@ -30,7 +30,8 @@ import {
   User,
   Utensils,
   Building2,
-  Lock
+  Lock,
+  Image as ImageIcon
 } from "lucide-react";
 import Link from "next/link";
 
@@ -614,6 +615,13 @@ export default function AdminDashboard() {
               >
                 <Utensils className="w-5 h-5" />
                 Manage Menu
+              </Link>
+              <Link
+                href="/admin/banners"
+                className="flex items-center gap-2 bg-amber-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-amber-700 transition"
+              >
+                <ImageIcon className="w-5 h-5" />
+                Manage Banners
               </Link>
               <Link
                 href="/"

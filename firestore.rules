@@ -37,6 +37,11 @@ service cloud.firestore {
       allow read: if true; // Anyone can read status
       allow write: if true; // For now, allow writes (should be restricted to admins later)
     }
+
+    // Banners (hero slideshow) - public read, write for admin
+    match /banners/{bannerId} {
+      allow read, write: if true;
+    }
   }
 }
 

@@ -6,5 +6,14 @@ service firebase.storage {
       allow read: if true; // Anyone can view images
       allow write: if true; // Allow uploads (admin dashboard)
     }
+    // Banner images and videos (hero slideshow) - public read, admin write
+    match /banner-images/{fileId} {
+      allow read: if true;
+      allow write: if true;
+    }
+    match /banner-videos/{fileId} {
+      allow read: if true;
+      allow write: if true;
+    }
   }
 }
