@@ -76,10 +76,10 @@ export default function Home() {
                   <div>
                     <h4 className="font-semibold text-gray-800 mb-1">Phone</h4>
                     <a 
-                      href="tel:01743362362" 
+                      href="tel:01743211930" 
                       className="text-gray-600 hover:text-primary transition"
                     >
-                      01743 362 362
+                      01743 211930
                     </a>
                   </div>
                 </div>
@@ -330,7 +330,7 @@ export default function Home() {
           </div>
           <p className="text-lg font-semibold mb-2">STAR'Z Burger/Pizza & Shakes</p>
           <p className="text-gray-400">27 Castle Foregate, Shrewsbury SY1 2EE</p>
-          <p className="text-gray-400 mt-2">Phone: 01743 362 362</p>
+          <p className="text-gray-400 mt-2">Phone: 01743 211930</p>
           <p className="text-gray-400 mt-4">
             Open 7 Days a Week | Sun-Thu: 4PM-1AM | Fri-Sat: 4PM-3AM
           </p>

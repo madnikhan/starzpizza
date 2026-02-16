@@ -171,8 +171,8 @@ function OrderConfirmationContent() {
           )}
           <p className="text-gray-600 mb-8">
             You will receive a confirmation message shortly. If you have any questions, please call us at{" "}
-            <a href="tel:01743362362" className="text-primary font-semibold hover:underline">
-              01743 362 362
+            <a href="tel:01743211930" className="text-primary font-semibold hover:underline">
+              01743 211930
             </a>
           </p>
           <Link

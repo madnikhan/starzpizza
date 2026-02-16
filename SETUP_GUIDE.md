@@ -37,7 +37,7 @@ NEXT_PUBLIC_APP_URL=http://localhost:3000
 # Restaurant Details
 RESTAURANT_NAME=STAR'Z Burger/Pizza & Shakes
 RESTAURANT_ADDRESS=27 Castle Foregate, Shrewsbury SY1 2EE
-RESTAURANT_PHONE=01743 362 362
+RESTAURANT_PHONE=01743 211930
 
 # Delivery Settings
 DELIVERY_FEE=2.50
