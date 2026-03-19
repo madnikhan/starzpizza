@@ -210,7 +210,16 @@ function formatTime(date: Date) {
   }).format(date);
 }
 
-type TabType = "all" | "pending" | "confirmed" | "preparing" | "ready" | "completed";
+function isToday(date: Date) {
+  const now = new Date();
+  return (
+    date.getDate() === now.getDate() &&
+    date.getMonth() === now.getMonth() &&
+    date.getFullYear() === now.getFullYear()
+  );
+}
+
+type TabType = "all" | "pending" | "confirmed" | "preparing" | "ready" | "completed" | "history";
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -225,6 +234,7 @@ export default function AdminDashboard() {
   const [updatingStatus, setUpdatingStatus] = useState(false);
   const processedOrdersRef = useRef<Set<string>>(new Set());
   const notificationIntervalsRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
+  const hasRunHistoryCleanupRef = useRef(false);
   
   // Get restaurant status
   const { status: restaurantStatus } = useRestaurantStatus();
@@ -451,10 +461,20 @@ export default function AdminDashboard() {
     }
   };
 
+  const todayOrders = orders.filter((order) => isToday(order.createdAt));
+  const orderHistory = orders.filter((order) => !isToday(order.createdAt));
+
   const getFilteredOrders = () => {
-    if (activeTab === "all") return orders;
-    return orders.filter((o) => o.status === activeTab);
+    if (activeTab === "history") {
+      return orderHistory;
+    }
+    if (activeTab === "all") {
+      return todayOrders;
+    }
+    return todayOrders.filter((o) => o.status === activeTab);
   };
+
+  const filteredOrders = getFilteredOrders();
 
   const toggleRestaurantStatus = async () => {
     if (updatingStatus) return;
@@ -487,13 +507,39 @@ export default function AdminDashboard() {
   };
 
   const tabs: { id: TabType; label: string; count: number }[] = [
-    { id: "all", label: "All Orders", count: orders.length },
-    { id: "pending", label: "Pending", count: orders.filter((o) => o.status === "pending").length },
-    { id: "confirmed", label: "Confirmed", count: orders.filter((o) => o.status === "confirmed").length },
-    { id: "preparing", label: "Preparing", count: orders.filter((o) => o.status === "preparing").length },
-    { id: "ready", label: "Ready", count: orders.filter((o) => o.status === "ready").length },
-    { id: "completed", label: "Completed", count: orders.filter((o) => o.status === "completed").length },
+    { id: "all", label: "All Orders", count: todayOrders.length },
+    { id: "pending", label: "Pending", count: todayOrders.filter((o) => o.status === "pending").length },
+    { id: "confirmed", label: "Confirmed", count: todayOrders.filter((o) => o.status === "confirmed").length },
+    { id: "preparing", label: "Preparing", count: todayOrders.filter((o) => o.status === "preparing").length },
+    { id: "ready", label: "Ready", count: todayOrders.filter((o) => o.status === "ready").length },
+    { id: "completed", label: "Completed", count: todayOrders.filter((o) => o.status === "completed").length },
+    { id: "history", label: "Order History", count: orderHistory.length },
   ];
+
+  // Auto-delete order history older than 30 days (runs once per dashboard load)
+  useEffect(() => {
+    if (!orders.length || hasRunHistoryCleanupRef.current) return;
+    hasRunHistoryCleanupRef.current = true;
+
+    const cleanupOldHistory = async () => {
+      try {
+        const cutoff = new Date();
+        cutoff.setDate(cutoff.getDate() - 30);
+
+        const oldHistory = orders.filter((order) => order.createdAt < cutoff);
+        if (oldHistory.length === 0) return;
+
+        await Promise.all(
+          oldHistory.map((order) => deleteDoc(doc(db, "orders", order.id)))
+        );
+        console.log(`Deleted ${oldHistory.length} order history records older than 30 days.`);
+      } catch (error) {
+        console.error("Failed to delete old order history:", error);
+      }
+    };
+
+    cleanupOldHistory();
+  }, [orders]);
 
   // Show loading while checking auth
   if (!isAuthChecked) {
@@ -709,43 +755,16 @@ export default function AdminDashboard() {
 
       {/* Orders List */}
       <div className="container mx-auto px-4 py-8">
-        {pendingOrders.length > 0 && activeTab === "all" && (
-          <div className="mb-8">
-            <h2 className="text-2xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <Bell className="w-6 h-6 text-yellow-500 animate-pulse" />
-              New Orders ({pendingOrders.length})
-            </h2>
-            <div className="space-y-4">
-              {pendingOrders.map((order) => (
-                <OrderCard
-                  key={order.id}
-                  order={order}
-                  onStatusUpdate={updateOrderStatus}
-                  onDelete={deleteOrder}
-                  onEdit={setEditingOrder}
-                  onManualPaymentConfirm={manuallyConfirmPayment}
-                  processingOrder={processingOrder}
-                  getNextStatus={getNextStatus}
-                  getStatusButtonText={getStatusButtonText}
-                  showDeleteConfirm={showDeleteConfirm}
-                  setShowDeleteConfirm={setShowDeleteConfirm}
-                />
-              ))}
-            </div>
-          </div>
-        )}
-
-        <h2 className="text-2xl font-bold text-gray-800 mb-4">
-          {activeTab === "all" ? "All Orders" : tabs.find((t) => t.id === activeTab)?.label}
-        </h2>
-        {getFilteredOrders().length === 0 ? (
+        {filteredOrders.length === 0 ? (
           <div className="bg-white rounded-lg shadow p-8 text-center">
             <Package className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-600 text-lg">No orders found</p>
+            <p className="text-gray-600 text-lg">
+              {activeTab === "history" ? "No order history found" : "No orders found"}
+            </p>
           </div>
         ) : (
           <div className="space-y-4">
-            {getFilteredOrders().map((order) => (
+            {filteredOrders.map((order) => (
               <OrderCard
                 key={order.id}
                 order={order}
