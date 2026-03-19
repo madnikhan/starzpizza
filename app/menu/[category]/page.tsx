@@ -1,9 +1,14 @@
 import { getMenuItemsByCategory, categories } from "@/lib/menu-data";
+import { getMenuItemsFromFirestore } from "@/lib/firebase/menu-public";
+import type { MenuItem } from "@/types/menu";
 import MenuItemCard from "@/components/MenuItemCard";
 import Header from "@/components/Header";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+
+/** Fresh menu from Firestore (admin uploads / imageUrl). No stale build-time snapshots. */
+export const dynamic = "force-dynamic";
 
 export async function generateStaticParams() {
   return categories.map((category) => ({
@@ -11,11 +16,30 @@ export async function generateStaticParams() {
   }));
 }
 
-export default function CategoryPage({ params }: { params: { category: string } }) {
-  const items = getMenuItemsByCategory(params.category);
+export default async function CategoryPage({
+  params,
+}: {
+  params: { category: string };
+}) {
   const category = categories.find((c) => c.id === params.category);
+  if (!category) {
+    notFound();
+  }
 
-  if (!category || items.length === 0) {
+  let items: MenuItem[] = await getMenuItemsFromFirestore().catch(
+    () => [] as MenuItem[]
+  );
+
+  items = items.filter(
+    (item) => item.category === params.category && item.available !== false
+  );
+
+  // Fallback: empty Firestore (e.g. new project) → static menu from lib/menu-data.ts
+  if (items.length === 0) {
+    items = getMenuItemsByCategory(params.category);
+  }
+
+  if (items.length === 0) {
     notFound();
   }
 
